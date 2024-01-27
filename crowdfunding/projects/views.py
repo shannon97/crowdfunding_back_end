@@ -64,15 +64,15 @@ class ProjectDetail(APIView):
 
         if serializer.is_valid():
             serializer.save(owner=request.user)
-            return Response(
-                serializer.data,
-                status=status.HTTP_201_CREATED
-                )
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
 
-        return Response(
-            serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk, format = None):
+        project = self.get_object(pk)
+        project.delete()
+        
+        return Response(status=status.HTTP_200_OK)
 
 
 class PledgeList(APIView):

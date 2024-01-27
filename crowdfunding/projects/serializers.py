@@ -1,11 +1,13 @@
 from rest_framework import serializers
 from .models import Project, Pledge
+import datetime
 
 class PledgeSerializer(serializers.ModelSerializer):
     supporter = serializers.ReadOnlyField(source='supporter.id')
     class Meta:
         model = Pledge
         fields = '__all__'
+
 
 class PledgeDetailSerializer(PledgeSerializer):
     def update(self, instance, validated_data):
@@ -17,19 +19,27 @@ class PledgeDetailSerializer(PledgeSerializer):
         instance.save()
         return instance
 
+
 class ProjectSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.id')
+    needed_by = serializers.DateField()
+
     class Meta:
         model = Project
         fields ='__all__'
+
+    goal_total = serializers.ReadOnlyField()
+
 
 class ProjectDetailSerializer(ProjectSerializer):
     pledges = PledgeSerializer(many=True, read_only=True)
 
     def update(self, instance, validated_data):
         instance.title = validated_data.get('title', instance.title)
+        instance.pet_name = validated_data.get('pet_name', instance.pet_name)
         instance.description = validated_data.get('description',instance.description)
         instance.goal = validated_data.get('goal', instance.goal)
+        instance.needed_by = validated_data.get('needed_by', instance.needed_by)
         instance.image = validated_data.get('image', instance.image)
         instance.is_open = validated_data.get('is_open', instance.is_open)
         instance.date_created = validated_data.get('date_created',instance.date_created)

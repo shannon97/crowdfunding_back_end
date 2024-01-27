@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import CustomUser
 from .serializers import CustomUserSerializer
+from rest_framework import status
 
 class CustomUserList(APIView):
     def get(self, request):
@@ -18,7 +19,7 @@ class CustomUserList(APIView):
             serializer.save()
             return Response(serializer.data)
         
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
 class CustomUserDetail(APIView):
     def get_object(self, pk):
