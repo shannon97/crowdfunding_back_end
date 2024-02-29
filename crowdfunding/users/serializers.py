@@ -20,9 +20,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'user_permissions'
             ]
         extra_kwargs = {
-            'username': {'write_only': True},
-            'password': {'write_only': True},
-            'email': {'write_only': True},
+            'password': {'write_only': True}
             }
 
     def create(self, validated_data):
