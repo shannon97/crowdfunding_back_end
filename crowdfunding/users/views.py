@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import CustomUser
 from .serializers import CustomUserSerializer
-from rest_framework import status
+from rest_framework import status, permissions
 
 class CustomUserList(APIView):
     def get(self, request):
@@ -22,6 +22,9 @@ class CustomUserList(APIView):
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
 class CustomUserDetail(APIView):
+
+    permission_classes = [permissions.IsAuthenticated]
+
     def get_object(self, pk):
         try:
             return CustomUser.objects.get(pk=pk)
@@ -34,3 +37,17 @@ class CustomUserDetail(APIView):
         serializer = CustomUserSerializer(user)
 
         return Response(serializer.data)
+    
+    def put(self, request, pk):
+        user = self.get_object(pk)
+
+        if request.user != user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        
+        serializer = CustomUserSerializer(user, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

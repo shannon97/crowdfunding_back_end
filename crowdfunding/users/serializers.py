@@ -19,7 +19,11 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'groups',
             'user_permissions'
             ]
-        extra_kwargs = {'password': {'write_only': True}}
+        extra_kwargs = {
+            'username': {'write_only': True},
+            'password': {'write_only': True},
+            'email': {'write_only': True},
+            }
 
     def create(self, validated_data):
         return CustomUser.objects.create_user(**validated_data)
